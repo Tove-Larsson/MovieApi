@@ -9,6 +9,7 @@ namespace MovieApi.Data
 
 		public DbSet<MovieDetails> MovieDetails { get; set; }
 
+		public DbSet<Review> Reviews { get; set; }
 
 	}
 }
