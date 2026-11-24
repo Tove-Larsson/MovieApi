@@ -8,5 +8,6 @@
 
 		public string Genre { get; set; }
 		public int Duration { get; set; }
+		public MovieDetails? MovieDetails { get; set; }
 	}
 }
