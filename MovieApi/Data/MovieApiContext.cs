@@ -11,5 +11,7 @@ namespace MovieApi.Data
 
 		public DbSet<Review> Reviews { get; set; }
 
+		public DbSet<Actor> Actors { get; set; }
+
 	}
 }
