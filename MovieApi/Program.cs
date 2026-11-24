@@ -1,4 +1,7 @@
 
+using Microsoft.EntityFrameworkCore;
+using MovieApi.Data;
+
 namespace MovieApi
 {
 	public class Program
@@ -6,6 +9,10 @@ namespace MovieApi
 		public static void Main(string[] args)
 		{
 			var builder = WebApplication.CreateBuilder(args);
+
+			var connectionString = builder.Configuration.GetConnectionString("MovieApiConnection");
+			builder.Services.AddDbContext<MovieApiContext>(options =>
+			options.UseSqlServer(connectionString));
 
 			// Add services to the container.
 
