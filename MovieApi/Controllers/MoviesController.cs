@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MovieApi.Data;
@@ -131,14 +132,33 @@ public class MoviesController : ControllerBase
     }
 
     // POST: api/Movies
-    // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [HttpPost]
-    public async Task<ActionResult<Movie>> PostMovie(Movie movie)
+    public async Task<ActionResult<MovieDto>> PostMovie(MovieCreateDto movieCreateDto)
     {
-        _context.Movies.Add(movie);
+        // Creates a new movie entity and copy the values from the incoming DTO
+        var entity = new Movie
+        {
+            Title = movieCreateDto.Title,
+            Year = movieCreateDto.Year,
+            Genre = movieCreateDto.Genre,
+            Duration = movieCreateDto.Duration
+        };
+
+        _context.Movies.Add(entity);
         await _context.SaveChangesAsync();
 
-        return CreatedAtAction("GetMovie", new { id = movie.Id }, movie);
+
+		// Creates a MovieDto to send back to the client.
+		var movieDto = new MovieDto
+        {
+            Id = entity.Id,
+            Title = entity.Title,
+            Year = entity.Year,
+            Genre = entity.Genre,
+            Duration = entity.Duration
+        };
+
+        return CreatedAtAction(nameof(GetMovie), new { id = movieDto.Id }, movieDto);
     }
 
     // DELETE: api/Movies/5
