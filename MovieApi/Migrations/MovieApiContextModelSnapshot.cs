@@ -34,6 +34,53 @@ namespace MovieApi.Migrations
                     b.HasIndex("MoviesId");
 
                     b.ToTable("ActorMovie");
+
+                    b.HasData(
+                        new
+                        {
+                            ActorsId = 1,
+                            MoviesId = 1
+                        },
+                        new
+                        {
+                            ActorsId = 1,
+                            MoviesId = 2
+                        },
+                        new
+                        {
+                            ActorsId = 1,
+                            MoviesId = 3
+                        },
+                        new
+                        {
+                            ActorsId = 2,
+                            MoviesId = 1
+                        },
+                        new
+                        {
+                            ActorsId = 2,
+                            MoviesId = 2
+                        },
+                        new
+                        {
+                            ActorsId = 2,
+                            MoviesId = 3
+                        },
+                        new
+                        {
+                            ActorsId = 3,
+                            MoviesId = 1
+                        },
+                        new
+                        {
+                            ActorsId = 3,
+                            MoviesId = 2
+                        },
+                        new
+                        {
+                            ActorsId = 3,
+                            MoviesId = 3
+                        });
                 });
 
             modelBuilder.Entity("MovieApi.Models.Actor", b =>
@@ -54,6 +101,26 @@ namespace MovieApi.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Actors");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            BirthYear = 1981,
+                            Name = "Elijah Wood"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            BirthYear = 1939,
+                            Name = "Ian McKellen"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            BirthYear = 1958,
+                            Name = "Viggo Mortensen"
+                        });
                 });
 
             modelBuilder.Entity("MovieApi.Models.Movie", b =>
@@ -81,6 +148,32 @@ namespace MovieApi.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Movies");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Duration = 178,
+                            Genre = "Fantasy",
+                            Title = "The Fellowship of the Ring",
+                            Year = 2001
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Duration = 179,
+                            Genre = "Fantasy",
+                            Title = "The Two Towers",
+                            Year = 2002
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Duration = 201,
+                            Genre = "Fantasy",
+                            Title = "The return of the king",
+                            Year = 2003
+                        });
                 });
 
             modelBuilder.Entity("MovieApi.Models.MovieDetails", b =>
@@ -111,6 +204,32 @@ namespace MovieApi.Migrations
                         .IsUnique();
 
                     b.ToTable("MovieDetails");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Budget = 93000000,
+                            Language = "English",
+                            MovieId = 1,
+                            Synopsis = "A hobbit inherits a powerful ring and sets out with a fellowship to destroy it in the fires of Mount Doom."
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Budget = 94000000,
+                            Language = "English",
+                            MovieId = 2,
+                            Synopsis = "The fellowship is split up as Frodo and Sam continue toward Mordor while war comes to Rohan."
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Budget = 94000000,
+                            Language = "English",
+                            MovieId = 3,
+                            Synopsis = "The final battle for Middle-earth begins as Frodo and Sam near the end of their journey."
+                        });
                 });
 
             modelBuilder.Entity("MovieApi.Models.Review", b =>
@@ -139,6 +258,55 @@ namespace MovieApi.Migrations
                     b.HasIndex("MovieId");
 
                     b.ToTable("Reviews");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Comment = "A perfect start to the trilogy.",
+                            MovieId = 1,
+                            Rating = 5,
+                            ReviewerName = "Anna"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Comment = "Beautiful, but a bit long.",
+                            MovieId = 1,
+                            Rating = 4,
+                            ReviewerName = "Johan"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Comment = "Helm's Deep is unforgettable.",
+                            MovieId = 2,
+                            Rating = 5,
+                            ReviewerName = "Sara"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            MovieId = 2,
+                            Rating = 4,
+                            ReviewerName = "Erik"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Comment = "A powerful ending.",
+                            MovieId = 3,
+                            Rating = 5,
+                            ReviewerName = "Lisa"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Comment = "Great, but too many endings.",
+                            MovieId = 3,
+                            Rating = 3,
+                            ReviewerName = "Omar"
+                        });
                 });
 
             modelBuilder.Entity("ActorMovie", b =>
