@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MovieApi.Models;
 using MovieApi.Data;
+using MovieApi.Dtos;
+using System.Linq.Expressions;
 
 [Route("api/[controller]")]
 [ApiController]
@@ -13,20 +15,38 @@ public class ReviewsController : ControllerBase
         _context = context;
     }
 
-    // GET: api/Review
+    // GET: api/Reviews
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Review>>> GetReview()
+    public async Task<ActionResult<IEnumerable<ReviewDto>>> GetReview()
     {
-        return await _context.Reviews.ToListAsync();
+        var reviews = await _context.Reviews
+            .Select(r => new ReviewDto
+            {
+                Id = r.Id,
+                ReviewerName = r.ReviewerName,
+                Comment = r.Comment,
+                Rating = r.Rating,
+            })
+            .ToListAsync();
+
+        return reviews;
     }
 
-    // GET: api/Review/5
+    // GET: api/Reviews/5
     [HttpGet("{id}")]
-    public async Task<ActionResult<Review>> GetReview(int id)
+    public async Task<ActionResult<ReviewDto>> GetReview(int id)
     {
-        var review = await _context.Reviews.FindAsync(id);
+		var review = await _context.Reviews
+			.Select(r => new ReviewDto
+			{
+				Id = r.Id,
+				ReviewerName = r.ReviewerName,
+				Comment = r.Comment,
+				Rating = r.Rating,
+			})
+			.FirstOrDefaultAsync();
 
-        if (review == null)
+		if (review == null)
         {
             return NotFound();
         }
@@ -34,17 +54,20 @@ public class ReviewsController : ControllerBase
         return review;
     }
 
-    // PUT: api/Review/5
-    // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+    // PUT: api/Reviews/5
     [HttpPut("{id}")]
-    public async Task<IActionResult> PutReview(int? id, Review review)
+    public async Task<IActionResult> PutReview(int id, ReviewUpdateDto reviewUpdateDto)
     {
-        if (id != review.Id)
+        var entity = await _context.Reviews.FindAsync(id);
+
+        if (entity == null)
         {
-            return BadRequest();
+            return NotFound();
         }
 
-        _context.Entry(review).State = EntityState.Modified;
+        entity.ReviewerName = reviewUpdateDto.ReviewerName;
+        entity.Comment = reviewUpdateDto.Comment;
+        entity.Rating = reviewUpdateDto.Rating;
 
         try
         {
@@ -52,33 +75,40 @@ public class ReviewsController : ControllerBase
         }
         catch (DbUpdateConcurrencyException)
         {
-            if (!ReviewExists(id))
-            {
-                return NotFound();
-            }
-            else
-            {
-                throw;
-            }
+            return Conflict();
         }
 
         return NoContent();
     }
-
-    // POST: api/Review
-    // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+    
+    // POST: api/Reviews
     [HttpPost]
-    public async Task<ActionResult<Review>> PostReview(Review review)
+    public async Task<ActionResult<ReviewDto>> PostReview(ReviewCreateDto reviewCreateDto)
     {
-        _context.Reviews.Add(review);
+        var entity = new Review
+        {
+            ReviewerName = reviewCreateDto.ReviewerName,
+            Comment = reviewCreateDto.Comment,
+            Rating = reviewCreateDto.Rating,
+        };
+
+        _context.Reviews.Add(entity);
         await _context.SaveChangesAsync();
 
-        return CreatedAtAction("GetReview", new { id = review.Id }, review);
+        var reviewDto = new ReviewDto
+        {
+            Id = entity.Id,
+            ReviewerName = entity.ReviewerName,
+            Comment = entity.Comment,
+            Rating = entity.Rating,
+        };
+
+        return CreatedAtAction(nameof(GetReview), new { id = reviewDto.Id }, reviewDto);
     }
 
-    // DELETE: api/Review/5
+    // DELETE: api/Reviews/5
     [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteReview(int? id)
+    public async Task<IActionResult> DeleteReview(int id)
     {
         var review = await _context.Reviews.FindAsync(id);
         if (review == null)
@@ -90,10 +120,5 @@ public class ReviewsController : ControllerBase
         await _context.SaveChangesAsync();
 
         return NoContent();
-    }
-
-    private bool ReviewExists(int? id)
-    {
-        return _context.Reviews.Any(e => e.Id == id);
     }
 }
