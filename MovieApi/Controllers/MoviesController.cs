@@ -56,6 +56,49 @@ public class MoviesController : ControllerBase
         return movie;
     }
 
+	// GET: api/Movies/5/details
+	[HttpGet("{id}/details")]
+	public async Task<ActionResult<MovieDetailDto>> GetDetails(int id)
+    {
+        var movieDetails = await _context.Movies
+            .Where(m => m.Id == id)
+            .Select(m => new MovieDetailDto
+            {
+                Synopsis = m.MovieDetails.Synopsis,
+                Language = m.MovieDetails.Language,
+                Budget = m.MovieDetails.Budget,
+				Movie = new MovieDto
+				{
+					Id = m.Id,
+					Title = m.Title,
+					Year = m.Year,
+					Genre = m.Genre,
+					Duration = m.Duration
+				},
+				Actors = m.Actors.Select(a => new ActorDto 
+                { 
+                    Id = a.Id,
+                    Name = a.Name,
+                    BirthYear = a.BirthYear,
+                }).ToList(),
+                Reviews = m.Reviews.Select(r => new ReviewDto
+                {
+                    Id = r.Id,
+                    ReviewerName = r.ReviewerName,
+                    Comment = r.Comment,
+                    Rating = r.Rating
+                }).ToList()
+			})
+            .FirstOrDefaultAsync();
+
+        if (movieDetails == null)
+        {  
+            return NotFound(); 
+        }
+
+        return movieDetails;
+    }
+
     // PUT: api/Movies/5
     // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [HttpPut("{id}")]
