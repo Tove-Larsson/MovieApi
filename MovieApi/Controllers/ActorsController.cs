@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MovieApi.Models;
 using MovieApi.Data;
+using MovieApi.Dtos;
 
 [Route("api/[controller]")]
 [ApiController]
@@ -13,18 +14,35 @@ public class ActorsController : ControllerBase
         _context = context;
     }
 
-    // GET: api/Actor
+    // GET: api/Actors
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Actor>>> GetActor()
+    public async Task<ActionResult<IEnumerable<ActorDto>>> GetActor()
     {
-        return await _context.Actors.ToListAsync();
+		var actor = await _context.Actors
+			.Select(a => new ActorDto
+			{
+				Id = a.Id,
+                Name = a.Name,
+                BirthYear = a.BirthYear
+			})
+			.ToListAsync();
+
+        return actor;
     }
 
-    // GET: api/Actor/5
+    // GET: api/Actors/5
     [HttpGet("{id}")]
-    public async Task<ActionResult<Actor>> GetActor(int id)
+    public async Task<ActionResult<ActorDto>> GetActor(int id)
     {
-        var actor = await _context.Actors.FindAsync(id);
+        var actor = await _context.Actors
+            .Where(a => a.Id == id)
+            .Select(a => new ActorDto
+            {
+                Id = a.Id,
+                Name = a.Name,
+                BirthYear = a.BirthYear
+            })
+            .FirstOrDefaultAsync();
 
         if (actor == null)
         {
@@ -34,17 +52,19 @@ public class ActorsController : ControllerBase
         return actor;
     }
 
-    // PUT: api/Actor/5
-    // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+    // PUT: api/Actors/5
     [HttpPut("{id}")]
-    public async Task<IActionResult> PutActor(int? id, Actor actor)
+    public async Task<IActionResult> PutActor(int id, ActorUpdateDto actorUpdateDto)
     {
-        if (id != actor.Id)
+        var entity = await _context.Actors.FindAsync(id);
+
+        if (entity == null)
         {
-            return BadRequest();
+            return NotFound();
         }
 
-        _context.Entry(actor).State = EntityState.Modified;
+        entity.Name = actorUpdateDto.Name;
+        entity.BirthYear = actorUpdateDto.BirthYear;
 
         try
         {
@@ -52,33 +72,38 @@ public class ActorsController : ControllerBase
         }
         catch (DbUpdateConcurrencyException)
         {
-            if (!ActorExists(id))
-            {
-                return NotFound();
-            }
-            else
-            {
-                throw;
-            }
+            return Conflict();
         }
 
         return NoContent();
     }
 
-    // POST: api/Actor
-    // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+    // POST: api/Actors
     [HttpPost]
-    public async Task<ActionResult<Actor>> PostActor(Actor actor)
+    public async Task<ActionResult<ActorDto>> PostActor(ActorCreateDto createActorDto)
     {
-        _context.Actors.Add(actor);
+        var entity = new Actor
+        {
+            Name = createActorDto.Name,
+            BirthYear = createActorDto.BirthYear,
+        };
+        
+        _context.Actors.Add(entity);
         await _context.SaveChangesAsync();
 
-        return CreatedAtAction("GetActor", new { id = actor.Id }, actor);
+        var actorDto = new ActorDto
+        {
+            Id = entity.Id,
+            Name = entity.Name,
+            BirthYear = entity.BirthYear
+        };
+
+        return CreatedAtAction(nameof(GetActor), new { id = actorDto.Id }, actorDto);
     }
 
-    // DELETE: api/Actor/5
+    // DELETE: api/Actors/5
     [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteActor(int? id)
+    public async Task<IActionResult> DeleteActor(int id)
     {
         var actor = await _context.Actors.FindAsync(id);
         if (actor == null)
@@ -90,10 +115,5 @@ public class ActorsController : ControllerBase
         await _context.SaveChangesAsync();
 
         return NoContent();
-    }
-
-    private bool ActorExists(int? id)
-    {
-        return _context.Actors.Any(e => e.Id == id);
     }
 }
