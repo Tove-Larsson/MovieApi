@@ -101,16 +101,20 @@ public class MoviesController : ControllerBase
     }
 
     // PUT: api/Movies/5
-    // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
     [HttpPut("{id}")]
-    public async Task<IActionResult> PutMovie(int? id, Movie movie)
+    public async Task<IActionResult> PutMovie(int id, MovieUpdateDto updateMovieDto)
     {
-        if (id != movie.Id)
+        var entity = await _context.Movies.FindAsync(id);
+
+        if (entity == null)
         {
-            return BadRequest();
+            return NotFound();
         }
 
-        _context.Entry(movie).State = EntityState.Modified;
+        entity.Title = updateMovieDto.Title;
+        entity.Year = updateMovieDto.Year;
+        entity.Genre = updateMovieDto.Genre;
+        entity.Duration = updateMovieDto.Duration;
 
         try
         {
@@ -118,14 +122,7 @@ public class MoviesController : ControllerBase
         }
         catch (DbUpdateConcurrencyException)
         {
-            if (!MovieExists(id))
-            {
-                return NotFound();
-            }
-            else
-            {
-                throw;
-            }
+            return Conflict();
         }
 
         return NoContent();
@@ -163,7 +160,7 @@ public class MoviesController : ControllerBase
 
     // DELETE: api/Movies/5
     [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteMovie(int? id)
+    public async Task<IActionResult> DeleteMovie(int id)
     {
         var movie = await _context.Movies.FindAsync(id);
         if (movie == null)
@@ -175,10 +172,5 @@ public class MoviesController : ControllerBase
         await _context.SaveChangesAsync();
 
         return NoContent();
-    }
-
-    private bool MovieExists(int? id)
-    {
-        return _context.Movies.Any(e => e.Id == id);
     }
 }
