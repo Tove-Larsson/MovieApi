@@ -6,10 +6,11 @@ namespace MovieApi.Dtos
 	public class MovieUpdateDto
 	{
 		[Required(ErrorMessage = "Please enter the Title of the movie")]
+		[MinLength(1)]
 		[MaxLength(150)]
 		public string Title { get; set; }
 
-		[Required(ErrorMessage = "Please enter the year the movie was released")]
+		[Required(ErrorMessage = "Please enter the year the movie was released, between 1888 and 2026")]
 		[Range(1888, 2026)]
 		public int Year { get; set; }
 

@@ -5,6 +5,7 @@ namespace MovieApi.Dtos
 	public class MovieCreateDto
 	{	
 		[Required(ErrorMessage ="Please enter the Title of the movie")]
+		[MinLength(1)]
 		[MaxLength(150)]
 		public string Title { get; set; }
 
