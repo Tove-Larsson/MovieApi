@@ -8,7 +8,6 @@ namespace MovieApi.Dtos
 		[MaxLength(200)]
 		[MinLength(3)]
 		public string ReviewerName { get; set; }
-		[Required]
 		public string? Comment { get; set; }
 		[Range(1, 5)]
 		public int Rating { get; set; }
