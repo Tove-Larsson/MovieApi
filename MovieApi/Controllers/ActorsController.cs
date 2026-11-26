@@ -154,4 +154,44 @@ public class ActorsController : ControllerBase
 		return NoContent();
 
 	}
+
+    // POST /api/movies/{movieId}/actors
+    [HttpPost("~/api/movies/{movieId}/actors")]
+    public async Task<ActionResult> PostMovieActor(int movieId, MovieActorCreateDto movieActorCreateDto)
+    {
+		var movie = await _context.Movies
+			.Include(m => m.MovieActors)
+			.FirstOrDefaultAsync(m => m.Id == movieId);
+
+		if (movie == null)
+		{
+			return NotFound();
+		}
+
+		var actor = await _context.Actors.FindAsync(movieActorCreateDto.ActorId);
+
+		if (actor == null)
+		{
+			return NotFound();
+		}
+
+		if (movie.MovieActors.Any(a => a.ActorId == movieActorCreateDto.ActorId))
+		{
+			return Conflict();
+		}
+
+		var movieActor = new MovieActor
+		{
+			MovieId = movieId,
+			ActorId = movieActorCreateDto.ActorId,
+            Role = movieActorCreateDto.Role,
+            
+		};
+
+		movie.MovieActors.Add(movieActor);
+		await _context.SaveChangesAsync();
+
+		return NoContent();
+	}
+    
 }
