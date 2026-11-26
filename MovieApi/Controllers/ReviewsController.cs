@@ -37,6 +37,7 @@ public class ReviewsController : ControllerBase
     public async Task<ActionResult<ReviewDto>> GetReview(int id)
     {
 		var review = await _context.Reviews
+            .Where(r => r.Id == id)
 			.Select(r => new ReviewDto
 			{
 				Id = r.Id,
