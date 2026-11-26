@@ -122,4 +122,29 @@ public class ReviewsController : ControllerBase
 
         return NoContent();
     }
+
+    // GET /api/movies/{movieId}/reviews
+    [HttpGet("~/api/movies/{movieId}/reviews")]
+    public async Task<ActionResult<IEnumerable<ReviewDto>>> GetReviewsForMovie(int movieId)
+    {
+        var movie = await _context.Movies.FindAsync(movieId);
+
+        if (movie == null)
+        {
+            return NotFound();
+        }
+
+        var reviews = await _context.Reviews
+            .Where(r => r.MovieId == movieId)
+            .Select(r => new ReviewDto
+            {
+                Id = r.Id,
+                ReviewerName = r.ReviewerName,
+                Comment = r.Comment,
+                Rating = r.Rating
+            })
+            .ToListAsync();
+
+        return reviews;
+    }
 }
