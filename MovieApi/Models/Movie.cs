@@ -10,6 +10,6 @@
 		public int Duration { get; set; }
 		public MovieDetails? MovieDetails { get; set; }
 		public ICollection<Review> Reviews { get; set; } = [];
-		public ICollection<Actor> Actors { get; set; } = [];
+		public List<MovieActor> MovieActors { get; set; } = [];
 	}
 }

@@ -122,7 +122,7 @@ public class ActorsController : ControllerBase
     public async Task<ActionResult> PostActorToMovie(int movieId, int actorId)
     {
 		var movie = await _context.Movies
-            .Include(m => m.Actors)
+            .Include(m => m.MovieActors)
             .FirstOrDefaultAsync(m => m.Id == movieId);
 
 		if (movie == null)
@@ -137,12 +137,18 @@ public class ActorsController : ControllerBase
             return NotFound();
         }
 
-        if (movie.Actors.Any(a => a.Id == actorId))
+        if (movie.MovieActors.Any(a => a.ActorId == actorId))
         {
             return Conflict();
         }
 
-		movie.Actors.Add(actor);
+		var movieActor = new MovieActor
+		{
+			MovieId = movieId,
+			ActorId = actorId
+		};
+
+		movie.MovieActors.Add(movieActor);
 		await _context.SaveChangesAsync();
 
 		return NoContent();

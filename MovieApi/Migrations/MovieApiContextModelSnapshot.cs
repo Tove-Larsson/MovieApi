@@ -21,68 +21,6 @@ namespace MovieApi.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("ActorMovie", b =>
-                {
-                    b.Property<int>("ActorsId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MoviesId")
-                        .HasColumnType("int");
-
-                    b.HasKey("ActorsId", "MoviesId");
-
-                    b.HasIndex("MoviesId");
-
-                    b.ToTable("ActorMovie");
-
-                    b.HasData(
-                        new
-                        {
-                            ActorsId = 1,
-                            MoviesId = 1
-                        },
-                        new
-                        {
-                            ActorsId = 1,
-                            MoviesId = 2
-                        },
-                        new
-                        {
-                            ActorsId = 1,
-                            MoviesId = 3
-                        },
-                        new
-                        {
-                            ActorsId = 2,
-                            MoviesId = 1
-                        },
-                        new
-                        {
-                            ActorsId = 2,
-                            MoviesId = 2
-                        },
-                        new
-                        {
-                            ActorsId = 2,
-                            MoviesId = 3
-                        },
-                        new
-                        {
-                            ActorsId = 3,
-                            MoviesId = 1
-                        },
-                        new
-                        {
-                            ActorsId = 3,
-                            MoviesId = 2
-                        },
-                        new
-                        {
-                            ActorsId = 3,
-                            MoviesId = 3
-                        });
-                });
-
             modelBuilder.Entity("MovieApi.Models.Actor", b =>
                 {
                     b.Property<int>("Id")
@@ -173,6 +111,80 @@ namespace MovieApi.Migrations
                             Genre = "Fantasy",
                             Title = "The return of the king",
                             Year = 2003
+                        });
+                });
+
+            modelBuilder.Entity("MovieApi.Models.MovieActor", b =>
+                {
+                    b.Property<int>("MovieId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ActorId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Role")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("MovieId", "ActorId");
+
+                    b.HasIndex("ActorId");
+
+                    b.ToTable("MovieActors");
+
+                    b.HasData(
+                        new
+                        {
+                            MovieId = 1,
+                            ActorId = 1,
+                            Role = "Frodo"
+                        },
+                        new
+                        {
+                            MovieId = 1,
+                            ActorId = 2,
+                            Role = "Gandalf the grey"
+                        },
+                        new
+                        {
+                            MovieId = 1,
+                            ActorId = 3,
+                            Role = "Aragorn son of Arathorn"
+                        },
+                        new
+                        {
+                            MovieId = 2,
+                            ActorId = 1,
+                            Role = "Frodo"
+                        },
+                        new
+                        {
+                            MovieId = 2,
+                            ActorId = 2,
+                            Role = "Gandalf the white"
+                        },
+                        new
+                        {
+                            MovieId = 2,
+                            ActorId = 3,
+                            Role = "Aragorn son of Arathorn"
+                        },
+                        new
+                        {
+                            MovieId = 3,
+                            ActorId = 1,
+                            Role = "Frodo"
+                        },
+                        new
+                        {
+                            MovieId = 3,
+                            ActorId = 2,
+                            Role = "Gandalf the white"
+                        },
+                        new
+                        {
+                            MovieId = 3,
+                            ActorId = 3,
+                            Role = "Aragorn son of Arathorn"
                         });
                 });
 
@@ -309,19 +321,23 @@ namespace MovieApi.Migrations
                         });
                 });
 
-            modelBuilder.Entity("ActorMovie", b =>
+            modelBuilder.Entity("MovieApi.Models.MovieActor", b =>
                 {
-                    b.HasOne("MovieApi.Models.Actor", null)
-                        .WithMany()
-                        .HasForeignKey("ActorsId")
+                    b.HasOne("MovieApi.Models.Actor", "Actor")
+                        .WithMany("MovieActor")
+                        .HasForeignKey("ActorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MovieApi.Models.Movie", null)
-                        .WithMany()
-                        .HasForeignKey("MoviesId")
+                    b.HasOne("MovieApi.Models.Movie", "Movie")
+                        .WithMany("MovieActors")
+                        .HasForeignKey("MovieId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Actor");
+
+                    b.Navigation("Movie");
                 });
 
             modelBuilder.Entity("MovieApi.Models.MovieDetails", b =>
@@ -346,8 +362,15 @@ namespace MovieApi.Migrations
                     b.Navigation("Movie");
                 });
 
+            modelBuilder.Entity("MovieApi.Models.Actor", b =>
+                {
+                    b.Navigation("MovieActor");
+                });
+
             modelBuilder.Entity("MovieApi.Models.Movie", b =>
                 {
+                    b.Navigation("MovieActors");
+
                     b.Navigation("MovieDetails");
 
                     b.Navigation("Reviews");

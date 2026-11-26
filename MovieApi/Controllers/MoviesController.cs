@@ -87,11 +87,12 @@ public class MoviesController : ControllerBase
 					Genre = m.Genre,
 					Duration = m.Duration
 				},
-				Actors = m.Actors.Select(a => new ActorDto 
+				Actors = m.MovieActors.Select(ma => new ActorDto 
                 { 
-                    Id = a.Id,
-                    Name = a.Name,
-                    BirthYear = a.BirthYear,
+                    Id = ma.Actor.Id,
+                    Name = ma.Actor.Name,
+                    BirthYear = ma.Actor.BirthYear,
+
                 }).ToList(),
                 Reviews = m.Reviews.Select(r => new ReviewDto
                 {
