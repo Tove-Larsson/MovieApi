@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using MovieApi.Models;
 using MovieApi.Data;
 using MovieApi.Dtos;
-using System.Linq.Expressions;
 
 [Route("api/[controller]")]
 [ApiController]
@@ -80,31 +79,6 @@ public class ReviewsController : ControllerBase
         }
 
         return NoContent();
-    }
-
-    // POST: api/Reviews
-    [HttpPost]
-    public async Task<ActionResult<ReviewDto>> PostReview(ReviewCreateDto reviewCreateDto)
-    {
-        var entity = new Review
-        {
-            ReviewerName = reviewCreateDto.ReviewerName,
-            Comment = reviewCreateDto.Comment,
-            Rating = reviewCreateDto.Rating,
-        };
-
-        _context.Reviews.Add(entity);
-        await _context.SaveChangesAsync();
-
-        var reviewDto = new ReviewDto
-        {
-            Id = entity.Id,
-            ReviewerName = entity.ReviewerName,
-            Comment = entity.Comment,
-            Rating = entity.Rating,
-        };
-
-        return CreatedAtAction(nameof(GetReview), new { id = reviewDto.Id }, reviewDto);
     }
 
     // DELETE: api/Reviews/5
