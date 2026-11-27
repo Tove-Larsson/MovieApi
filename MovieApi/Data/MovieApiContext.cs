@@ -76,20 +76,20 @@ namespace MovieApi.Data
 				new Actor { Id = 2, Name = "Ian McKellen", BirthYear = 1939 },
 				new Actor { Id = 3, Name = "Viggo Mortensen", BirthYear = 1958});
 
-			modelBuilder.Entity<Movie>()
-				.HasMany(m => m.Actors)
-				.WithMany(a => a.Movies)
-				.UsingEntity(j => j.HasData(
-					new { ActorsId = 1, MoviesId = 1 },
-					new { ActorsId = 1, MoviesId = 2 },
-					new { ActorsId = 1, MoviesId = 3 },
-					new { ActorsId = 2, MoviesId = 1 },
-					new { ActorsId = 2, MoviesId = 2 },
-					new { ActorsId = 2, MoviesId = 3 },
-					new { ActorsId = 3, MoviesId = 1 },
-					new { ActorsId = 3, MoviesId = 2 },
-					new { ActorsId = 3, MoviesId = 3 }
-					));
+			modelBuilder.Entity<MovieActor>().HasData(
+				new MovieActor { MovieId = 1, ActorId = 1, Role = "Frodo" },
+				new MovieActor { MovieId = 1, ActorId = 2, Role = "Gandalf the grey" },
+				new MovieActor { MovieId = 1, ActorId = 3, Role = "Aragorn son of Arathorn" },
+				new MovieActor { MovieId = 2, ActorId = 1, Role = "Frodo" },
+				new MovieActor { MovieId = 2, ActorId = 2, Role = "Gandalf the white" },
+				new MovieActor { MovieId = 2, ActorId = 3, Role = "Aragorn son of Arathorn" },
+				new MovieActor { MovieId = 3, ActorId = 1, Role = "Frodo" },
+				new MovieActor { MovieId = 3, ActorId = 2, Role = "Gandalf the white" },
+				new MovieActor { MovieId = 3, ActorId = 3, Role = "Aragorn son of Arathorn" });
+
+
+
+
 		}
 
 		public DbSet<Movie> Movies { get; set; }
@@ -99,6 +99,8 @@ namespace MovieApi.Data
 		public DbSet<Review> Reviews { get; set; }
 
 		public DbSet<Actor> Actors { get; set; }
+
+		public DbSet<MovieActor> MovieActors { get; set; }
 
 	}
 }

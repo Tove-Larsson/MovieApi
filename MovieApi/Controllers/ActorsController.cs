@@ -122,7 +122,7 @@ public class ActorsController : ControllerBase
     public async Task<ActionResult> PostActorToMovie(int movieId, int actorId)
     {
 		var movie = await _context.Movies
-            .Include(m => m.Actors)
+            .Include(m => m.MovieActors)
             .FirstOrDefaultAsync(m => m.Id == movieId);
 
 		if (movie == null)
@@ -137,15 +137,61 @@ public class ActorsController : ControllerBase
             return NotFound();
         }
 
-        if (movie.Actors.Any(a => a.Id == actorId))
+        if (movie.MovieActors.Any(a => a.ActorId == actorId))
         {
             return Conflict();
         }
 
-		movie.Actors.Add(actor);
+		var movieActor = new MovieActor
+		{
+			MovieId = movieId,
+			ActorId = actorId
+		};
+
+		movie.MovieActors.Add(movieActor);
 		await _context.SaveChangesAsync();
 
 		return NoContent();
 
 	}
+
+    // POST /api/movies/{movieId}/actors
+    [HttpPost("~/api/movies/{movieId}/actors")]
+    public async Task<ActionResult> PostMovieActor(int movieId, MovieActorCreateDto movieActorCreateDto)
+    {
+		var movie = await _context.Movies
+			.Include(m => m.MovieActors)
+			.FirstOrDefaultAsync(m => m.Id == movieId);
+
+		if (movie == null)
+		{
+			return NotFound();
+		}
+
+		var actor = await _context.Actors.FindAsync(movieActorCreateDto.ActorId);
+
+		if (actor == null)
+		{
+			return NotFound();
+		}
+
+		if (movie.MovieActors.Any(a => a.ActorId == movieActorCreateDto.ActorId))
+		{
+			return Conflict();
+		}
+
+		var movieActor = new MovieActor
+		{
+			MovieId = movieId,
+			ActorId = movieActorCreateDto.ActorId,
+            Role = movieActorCreateDto.Role,
+            
+		};
+
+		movie.MovieActors.Add(movieActor);
+		await _context.SaveChangesAsync();
+
+		return NoContent();
+	}
+    
 }
